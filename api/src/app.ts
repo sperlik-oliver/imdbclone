@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import dotenv from 'dotenv'
 import tokenMiddleware from './middleware/token.middleware';
+import { userRouter } from './routes/user/user.route';
 
 dotenv.config()
 
@@ -12,9 +13,12 @@ app.use(express.json())
 
 app.use(tokenMiddleware)
 
-app.listen(process.env.PORT, () => {
-    console.log(`Application is ready on port ${process.env.PORT}`)
+app.use('/user', userRouter)
+
+app.listen(PORT, () => {
+    console.log(`Application is ready on port ${PORT}`)
 })
+
 
 
 export default app

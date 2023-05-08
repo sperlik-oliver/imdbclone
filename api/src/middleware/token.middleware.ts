@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { HTTP_STATUS_CODES } from '../../../shared/http'
+import { HTTP_STATUS_CODES } from '../../../shared/types'
 
 const AUTH_API_KEY = process.env.AUTH_API_KEY
 
