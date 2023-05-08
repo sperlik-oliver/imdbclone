@@ -12,6 +12,53 @@ model User {
   email String @unique
   name String
   password String
+  ratings Rating[]
+  comments Comment[]
 
   @@map("user")
 }
+
+model Movie {
+  id Int @id @default(autoincrement())
+  name String
+  description String
+  image String?
+  actors Actor[] 
+  comments Comment[]
+  ratings Rating[]
+
+  @@map("movie")
+}
+
+model Actor {
+  id Int @id @default(autoincrement())
+  name String
+  movies Movie[]
+
+  @@map("actor")
+}
+
+model Rating {
+  rating Int
+  movieId Int
+  movie Movie @relation(fields: [movieId], references: [id])
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([movieId, userId])
+  @@map("rating")
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  text String
+
+  movieId Int
+  movie Movie @relation(fields: [movieId], references: [id])
+
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("comment")
+}
+
