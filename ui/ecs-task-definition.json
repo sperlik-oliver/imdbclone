@@ -1,0 +1,24 @@
+{
+    "family": "imdbclone",
+    "executionRoleArn": "arn:aws:iam::595123720229:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+        {
+            "name": "imdb-ui",
+            "image": "595123720229.dkr.ecr.eu-central-1.amazonaws.com/imdb-ui:latest",
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "hostPort": 3000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true
+        }
+    ],
+    "requiresCompatibilities": [
+        "EC2"
+    ],
+    "cpu": "1024",
+    "memory": "1024"
+}
