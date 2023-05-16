@@ -6,7 +6,8 @@ export const HTTP_STATUS_CODES = Object.freeze({
 })
 
 export const ERRORS = Object.freeze({
-    INTERNAL_SERVER_ERROR: 'Internal server error'
+    INTERNAL_SERVER_ERROR: 'Internal server error',
+    INVALID_TOKEN: 'Invalid token'
 })
 
 export interface ResponseEnvelope<T> {
