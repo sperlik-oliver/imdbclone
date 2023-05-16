@@ -43,6 +43,7 @@ const addFriend = async (req: Request, res: Response) => {
 const removeFriend = async (req: Request, res: Response) => {
     const { remover, removed } = req.body
     await safeQuery(async () => {
+        
         await repo.removeFriend(remover, removed)
         return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
     }, res, 'user/remove-friend')

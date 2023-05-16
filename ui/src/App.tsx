@@ -1,7 +1,10 @@
 import React from 'react';
+import './App.css'
+import Layout from './components/layout/layout';
+
 
 const App = () => {
-  return <>Hello world</>
+  return <Layout/>
 }
 
-export default App;
+export default App
