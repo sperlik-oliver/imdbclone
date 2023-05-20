@@ -14,6 +14,7 @@ model User {
   password      String
   ratings       Rating[]
   comments      Comment[]
+  toplist       Movie[]
   friendOf      User[] @relation("friends")
   friends       User[] @relation("friends")
 
@@ -29,6 +30,7 @@ model Movie {
   actors        Actor[] 
   comments      Comment[]
   ratings       Rating[]
+  toplistedBy   User[]
 
   @@map("movie")
 }

@@ -5,6 +5,8 @@ import * as validate from './user.validate'
 import { HTTP_STATUS_CODES, ERRORS } from "../../../../shared/types";
 import { User } from "@prisma/client";
 
+const PATH = 'user'
+
 const login = async (req: Request, res: Response) => {
    const { email, password } = req.body
    const error = validate.login(email)
@@ -13,7 +15,7 @@ const login = async (req: Request, res: Response) => {
         const user = await repo.login(email, password)
         if (user) return res.status(HTTP_STATUS_CODES.OK).json({ data: { name: user.name, email: user.email }, error: null })
         return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({ data: null, error: validate.USER_VALIDATION_ERRORS.INVALID_CREDENTIALS })
-   }, res, 'user/login')
+   }, res, `${PATH}/login`)
 }
 
 const register = async (req: Request, res: Response) => {
@@ -22,22 +24,22 @@ const register = async (req: Request, res: Response) => {
         const result = await repo.register(user)
         if (result) return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
         return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({ data: null, error: ERRORS.INTERNAL_SERVER_ERROR })
-    }, res, 'user/register')
+    }, res, `${PATH}/register`)
 }
 
 const all = async (req: Request, res: Response) => {
     await safeQuery(async () => {
         const result = await repo.all()
         return res.status(HTTP_STATUS_CODES.OK).json({ data: result, error: null })
-    }, res, 'user/all')
-}
-
+    }, res, `${PATH}/all`)
+    }
+    
 const addFriend = async (req: Request, res: Response) => {
     const { adder, added } = req.body
     await safeQuery(async () => {
         await repo.addFriend(adder, added)
         return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
-    }, res, 'user/add-friend')
+    }, res, `${PATH}/add-friend`)
 }
 
 const removeFriend = async (req: Request, res: Response) => {
@@ -46,7 +48,7 @@ const removeFriend = async (req: Request, res: Response) => {
         
         await repo.removeFriend(remover, removed)
         return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
-    }, res, 'user/remove-friend')
+    }, res, `${PATH}/remove-friend`)
 }
 
 const deleteAccount = async (req: Request, res: Response) => {
@@ -54,7 +56,7 @@ const deleteAccount = async (req: Request, res: Response) => {
     await safeQuery(async () => {
         await repo.deleteAccount(email as string)
         return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
-    }, res, 'user/delete-account')
+    }, res, `${PATH}/delete-account`)
 }
 
 export const userRouter = Router()
