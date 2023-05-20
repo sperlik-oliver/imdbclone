@@ -8,58 +8,60 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  name String
-  password String
-  ratings Rating[]
-  comments Comment[]
-  friendOf User[] @relation("friends")
-  friends User[] @relation("friends")
+  id            Int @id @default(autoincrement())
+  email         String @unique
+  name          String
+  password      String
+  ratings       Rating[]
+  comments      Comment[]
+  friendOf      User[] @relation("friends")
+  friends       User[] @relation("friends")
 
   @@map("user")
 }
 
 model Movie {
-  id Int @id @default(autoincrement())
-  name String
-  description String
-  image String?
-  actors Actor[] 
-  comments Comment[]
-  ratings Rating[]
+  id            Int @id @default(autoincrement())
+  name          String
+  description   String
+  director      String
+  image         Bytes
+  actors        Actor[] 
+  comments      Comment[]
+  ratings       Rating[]
 
   @@map("movie")
 }
 
 model Actor {
-  id Int @id @default(autoincrement())
-  name String
-  movies Movie[]
+  id            Int @id @default(autoincrement())
+  name          String
+  movies        Movie[]
 
   @@map("actor")
 }
 
 model Rating {
-  rating Int
-  movieId Int
-  movie Movie @relation(fields: [movieId], references: [id])
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  rating        Int
+  movieId       Int
+  movie         Movie @relation(fields: [movieId], references: [id])
+  userId        Int
+  user          User @relation(fields: [userId], references: [id])
 
   @@unique([movieId, userId])
   @@map("rating")
 }
 
 model Comment {
-  id Int @id @default(autoincrement())
-  text String
+  id           Int @id @default(autoincrement())
+  text         String
+  date         String
 
-  movieId Int
-  movie Movie @relation(fields: [movieId], references: [id])
+  movieId      Int
+  movie        Movie @relation(fields: [movieId], references: [id])
 
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  userId       Int
+  user         User @relation(fields: [userId], references: [id])
 
   @@map("comment")
 }
