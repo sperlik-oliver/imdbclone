@@ -3,7 +3,6 @@ import safeQuery from "../safe-query/safe-query";
 import * as repo from '../../repository/user/user.repository'
 import * as validate from './user.validate'
 import { HTTP_STATUS_CODES, ERRORS } from "../../../../shared/types";
-import { User } from "@prisma/client";
 
 const PATH = 'user'
 
@@ -13,24 +12,26 @@ const login = async (req: Request, res: Response) => {
    if (error) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error })
    await safeQuery(async () => {
         const user = await repo.login(email, password)
-        if (user) return res.status(HTTP_STATUS_CODES.OK).json({ data: { name: user.name, email: user.email }, error: null })
+        if (user) return res.status(HTTP_STATUS_CODES.OK).json({ data: { username: user.username, email: user.email }, error: null })
         return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({ data: null, error: validate.USER_VALIDATION_ERRORS.INVALID_CREDENTIALS })
    }, res, `${PATH}/login`)
 }
 
 const register = async (req: Request, res: Response) => {
-    const user: User = req.body
+    const { username, email, password, confirmPassword } = req.body
     await safeQuery(async () => {
-        const result = await repo.register(user)
-        if (result) return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
-        return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({ data: null, error: ERRORS.INTERNAL_SERVER_ERROR })
+        const error = validate.register(username, email, password, confirmPassword)
+        if (error) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error })
+        const { error: dbError } = await repo.register(email, username, password)
+        if (dbError) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error: dbError })
+        return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
     }, res, `${PATH}/register`)
 }
 
 const all = async (req: Request, res: Response) => {
     await safeQuery(async () => {
         const result = await repo.all()
-        return res.status(HTTP_STATUS_CODES.OK).json({ data: result, error: null })
+        return res.status(HTTP_STATUS_CODES.OK).json({ data: result.map(({ username }) => username), error: null })
     }, res, `${PATH}/all`)
     }
     
@@ -39,7 +40,7 @@ const addFriend = async (req: Request, res: Response) => {
     await safeQuery(async () => {
         await repo.addFriend(adder, added)
         return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
-    }, res, `${PATH}/add-friend`)
+    }, res, `${PATH}/friend/add`)
 }
 
 const removeFriend = async (req: Request, res: Response) => {
@@ -48,7 +49,7 @@ const removeFriend = async (req: Request, res: Response) => {
         
         await repo.removeFriend(remover, removed)
         return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
-    }, res, `${PATH}/remove-friend`)
+    }, res, `${PATH}/friend/remove`)
 }
 
 const deleteAccount = async (req: Request, res: Response) => {
@@ -64,6 +65,6 @@ export const userRouter = Router()
 userRouter.get('/', all)
 userRouter.post('/login', login)
 userRouter.post('/register', register)
-userRouter.put('/addFriend', addFriend)
-userRouter.put('/removeFriend', removeFriend)
+userRouter.put('/friend/add', addFriend)
+userRouter.put('/friend/remove', removeFriend)
 userRouter.delete('/', deleteAccount)

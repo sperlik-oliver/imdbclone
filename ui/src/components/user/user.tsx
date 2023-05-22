@@ -1,7 +1,7 @@
 import React from "react";
 
-const Content = () => {
+const User = () => {
     return <></>
 }
 
-export default Content
+export default User

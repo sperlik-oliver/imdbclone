@@ -1,12 +1,12 @@
 import React from "react";
 import Footer from "./footer";
-import Content from "./content";
 import Navbar from "./navbar";
+import Router from "./router";
 
 const Layout = () => {
     return <>
         <Navbar />
-        <Content/>
+        <Router />
         <Footer/>
     </>
 }

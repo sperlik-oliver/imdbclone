@@ -18,16 +18,28 @@ export const login = async (email: string, password: string): Promise<User | nul
     }) ?? null
 
 
-export const register = async (user: User): Promise<number> => {
-    const { email, name, password } = user
-    const createdUser = await client.user.create({
+export const register = async (email: string, username: string, password: string): Promise<{error: null | string}> => {
+    const existingUser = await client.user.findFirst({
+        where: {
+            OR: [
+                {
+                    email
+                },
+                {
+                    username
+                }
+            ]
+        }
+    })
+    if (existingUser) return { error: "Username or email already in use." }
+    await client.user.create({
         data: {
             email,
-            name,
+            username,
             password: hash(password)
         }
     })
-    return createdUser.id
+    return { error: null }
 }
 
 export const deleteAccount = async (email: string): Promise<void> => {

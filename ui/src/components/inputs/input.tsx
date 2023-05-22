@@ -9,12 +9,14 @@ type Props = {
     label?: string,
     placeholder?: string
     width?: number
+    type?: 'password' | 'email' | 'text' | 'number'
 }
 
-const Input = ({ label, value, onChange, placeholder, width = 300 }: Props) => {
+const Input = ({ label, value, onChange, placeholder, width = 300, type = 'text' }: Props) => {
     return <>
       {label && <label>{label}</label>}
       <StyledInput
+        type={type}
         value={value}
         onChange={(event) => onChange(getValue(event))}
         placeholder={placeholder}

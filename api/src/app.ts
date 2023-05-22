@@ -3,12 +3,15 @@ import dotenv from 'dotenv'
 import tokenMiddleware from './middleware/token.middleware';
 import { userRouter } from './routes/user/user.route';
 import { HTTP_STATUS_CODES } from '../../shared/types';
+import cors from 'cors'
 
 dotenv.config()
 
 const PORT = process.env.PORT
 
 const app = express()
+
+app.use(cors())
 
 app.use(express.json())
 
