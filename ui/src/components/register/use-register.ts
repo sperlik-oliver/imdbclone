@@ -1,7 +1,8 @@
 import { instance } from "../../axios.config"
+import useEnsureAuth from "../user/use-ensure-auth"
 
 const useRegister = (email: string, username: string, password: string, confirmPassword: string) => {
-    const register = async () => { 
+    return async () => { 
         const { data } = await instance({
             method: 'post',
             url: '/user/register',
@@ -12,10 +13,8 @@ const useRegister = (email: string, username: string, password: string, confirmP
                 confirmPassword
             }
         })
-        console.log('here 2')
         return data
     }
-    return register
 }
 
 export default useRegister

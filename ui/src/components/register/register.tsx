@@ -8,8 +8,12 @@ import { UserContext } from "../user/user.context";
 import useRegister from "./use-register";
 import useNotify from "../notification/use-notify";
 import { useNavigate } from "react-router-dom";
+import User from "../user/user";
 
 const Register = () => {
+    
+    const navigate = useNavigate()
+    const [user, _] = useContext(UserContext)
     
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
@@ -19,11 +23,10 @@ const Register = () => {
 
     const notify = useNotify()
     
-    const navigate = useNavigate()
 
     const onRegister = async () => {
         try {
-        const { data, error, status } = await register()
+        const { error } = await register()
         if (error) {
             notify(error, 'error')
             return
@@ -43,7 +46,7 @@ const Register = () => {
         
         <Button label="Register" onClick={async () => await onRegister()} />
         <Row>
-            <span>Already have an account? {<Link to="/login">Sign In</Link>}</span>
+            <span>Already have an account? {<Link to="/login" allowHighlight={false}>Sign In</Link>}</span>
         </Row>
         
         

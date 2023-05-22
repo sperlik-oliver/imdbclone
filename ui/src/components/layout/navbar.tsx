@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "@emotion/styled";
 import { Row } from "../../styled/flex";
 import Input from "../inputs/input";
 import { useLocation, useSearchParams } from 'react-router-dom';
 import Link from "../link/link";
+import { UserContext } from "../user/user.context";
 
 
 
@@ -11,9 +12,11 @@ const Navbar = () => {
     const [_, setSearchParams] = useSearchParams();
     const [nameFilter, setNameFilter] = useState('')
     const location = useLocation()
-    const [signInTitle, signInLink] = ['Sign in', '/login']
-    
 
+    const [user, setUser] = useContext(UserContext)
+
+    const signInLink = user.loggedIn ? '/account' : '/login'
+    
     const onChangeNameFilter = (value: string) => {
         setSearchParams({['nameFilter']: value})
         setNameFilter(value) 
@@ -35,7 +38,7 @@ const Navbar = () => {
             }
         </Side>
         <Side>
-            <Item><Link to={signInLink}>{signInTitle}</Link></Item>
+            <Item><Link to={signInLink}>Account</Link></Item>
         </Side>
             
             

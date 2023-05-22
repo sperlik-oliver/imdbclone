@@ -1,4 +1,4 @@
-import { HTTP_STATUS_CODES } from "../../../../shared/types"
+import { HTTP_STATUS_CODES } from "../../types"
 import { Response } from "express"
 import log from '../../logging/log'
 

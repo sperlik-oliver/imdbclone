@@ -2,7 +2,8 @@ import { Request, Response, Router } from "express";
 import safeQuery from "../safe-query/safe-query";
 import * as repo from '../../repository/user/user.repository'
 import * as validate from './user.validate'
-import { HTTP_STATUS_CODES, ERRORS } from "../../../../shared/types";
+import ensureAuthenticatedMiddleware from "../../middleware/ensure-authenticated.middleware";
+import { HTTP_STATUS_CODES } from "../../types";
 
 const PATH = 'user'
 
@@ -12,7 +13,13 @@ const login = async (req: Request, res: Response) => {
    if (error) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error })
    await safeQuery(async () => {
         const user = await repo.login(email, password)
-        if (user) return res.status(HTTP_STATUS_CODES.OK).json({ data: { username: user.username, email: user.email }, error: null })
+        if (user) return res.status(HTTP_STATUS_CODES.OK).json({ data: { 
+            username: user.username, 
+            email: user.email, 
+            token: user.token, 
+            friends: repo.mapFriends(user.friends), 
+            toplist: user.toplist 
+        }, error: null })
         return res.status(HTTP_STATUS_CODES.UNAUTHORIZED).json({ data: null, error: validate.USER_VALIDATION_ERRORS.INVALID_CREDENTIALS })
    }, res, `${PATH}/login`)
 }
@@ -27,44 +34,67 @@ const register = async (req: Request, res: Response) => {
         return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
     }, res, `${PATH}/register`)
 }
-
-const all = async (req: Request, res: Response) => {
-    await safeQuery(async () => {
-        const result = await repo.all()
-        return res.status(HTTP_STATUS_CODES.OK).json({ data: result.map(({ username }) => username), error: null })
-    }, res, `${PATH}/all`)
-    }
     
 const addFriend = async (req: Request, res: Response) => {
     const { adder, added } = req.body
     await safeQuery(async () => {
-        await repo.addFriend(adder, added)
-        return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
+        const error = validate.friends(adder, added)
+        if (error) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error })
+        const result = await repo.addFriend(adder, added)
+        if (typeof result === 'string') return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error: result })
+        return res.status(HTTP_STATUS_CODES.OK).json({ data: repo.mapFriends(result.friends), error: null })
     }, res, `${PATH}/friend/add`)
 }
 
 const removeFriend = async (req: Request, res: Response) => {
     const { remover, removed } = req.body
     await safeQuery(async () => {
-        
-        await repo.removeFriend(remover, removed)
-        return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
+        const error = validate.friends(remover, removed)
+        if (error) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error })
+        const result = await repo.removeFriend(remover, removed)
+        if (typeof result === 'string') return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error: result })
+        return res.status(HTTP_STATUS_CODES.OK).json({ data: repo.mapFriends(result.friends), error: null })
     }, res, `${PATH}/friend/remove`)
 }
 
 const deleteAccount = async (req: Request, res: Response) => {
-    const email = req.query.email
+    const { email } = req.body
     await safeQuery(async () => {
-        await repo.deleteAccount(email as string)
+        const error = validate.deleteAccount(email)
+        if (error) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error })
+        await repo.deleteAccount(email)
         return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
     }, res, `${PATH}/delete-account`)
 }
 
+const changePassword = async (req: Request, res: Response) => {
+    const { email, currentPassword, newPassword, confirmNewPassword } = req.body
+    await safeQuery(async () => {
+        const error = validate.changePassword(email, currentPassword, newPassword, confirmNewPassword)
+        if (error) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error })
+        const { error: dbError } = await repo.changePassword(email, currentPassword, newPassword)
+        if (dbError) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error: dbError })
+        return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
+    }, res, `${PATH}/password`)
+}
+
+const changeUsername = async (req: Request, res: Response) => {
+    const { email, username } = req.body
+    await safeQuery(async () => {
+        const error = validate.changeUsername(email, username)
+        if (error) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error })
+        const { error: dbError } = await repo.changeUsername(email, username)
+        if (dbError) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error: dbError })
+        return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
+    }, res, `${PATH}/username`)
+}
+
 export const userRouter = Router()
 
-userRouter.get('/', all)
 userRouter.post('/login', login)
 userRouter.post('/register', register)
-userRouter.put('/friend/add', addFriend)
-userRouter.put('/friend/remove', removeFriend)
-userRouter.delete('/', deleteAccount)
+userRouter.put('/friend/add', (req, res, next) => ensureAuthenticatedMiddleware(req, res, next), addFriend)
+userRouter.put('/friend/remove',(req, res, next) => ensureAuthenticatedMiddleware(req, res, next), removeFriend)
+userRouter.put('/username',(req, res, next) => ensureAuthenticatedMiddleware(req, res, next), changeUsername)
+userRouter.put('/password',(req, res, next) => ensureAuthenticatedMiddleware(req, res, next), changePassword)
+userRouter.delete('/', (req, res, next) => ensureAuthenticatedMiddleware(req, res, next), deleteAccount)

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ERRORS, HTTP_STATUS_CODES } from '../../../shared/types'
+import { ERRORS, HTTP_STATUS_CODES } from '../types'
 import dotenv from 'dotenv'
 
 dotenv.config()

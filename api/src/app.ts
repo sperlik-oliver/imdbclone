@@ -2,8 +2,9 @@ import express, { Router } from 'express';
 import dotenv from 'dotenv'
 import tokenMiddleware from './middleware/token.middleware';
 import { userRouter } from './routes/user/user.route';
-import { HTTP_STATUS_CODES } from '../../shared/types';
+import { HTTP_STATUS_CODES } from './types';
 import cors from 'cors'
+import ensureAuthenticatedMiddleware from './middleware/ensure-authenticated.middleware';
 
 dotenv.config()
 

@@ -3,21 +3,34 @@ import React from 'react'
 import { Link as ReactLink, useLocation } from 'react-router-dom';
 import { HOVER, SELECTED } from '../../styled/colors';
 
+
 type Props = {
     children: React.ReactNode;
     to: string;
+    allowHighlight?: boolean
 }
 
-const Link = ({ children, to }: Props) => {
-    const location = useLocation()
+const ACCOUNT_ROUTES = ['/account', '/login', '/register']
 
-    return <StyledLink path={location.pathname} to={to}>{children}</StyledLink>
+const Link = ({ children, to, allowHighlight = true }: Props) => {
+    const { pathname } = useLocation()
+
+    const isHighlighted = () => {
+        if (ACCOUNT_ROUTES.includes(to) && ACCOUNT_ROUTES.some(route => route === pathname)) return true
+        if (pathname === to) return true
+        return false
+    }
+    
+    const ishighlighted = isHighlighted() && allowHighlight
+
+    return <StyledLink ishighlighted={ishighlighted ? 'true' : 'false'} to={to}>{children}</StyledLink>
 }
 
-const StyledLink = styled(ReactLink)<{ path: string, to: string }>`
-    color: ${({ path, to }) => path === to ? SELECTED : 'white'} !important;
+const StyledLink = styled(ReactLink)<{ ishighlighted: 'true' | 'false' }>`
+    color: ${({ ishighlighted }) => ishighlighted === 'true' ? SELECTED : 'white'} !important;
     text-decoration: none !important;
     font-weight: bold !important;
+    cursor: pointer; !important;
     &:hover {
         color: ${HOVER} !important;
     }

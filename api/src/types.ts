@@ -10,8 +10,3 @@ export const ERRORS = Object.freeze({
     INTERNAL_SERVER_ERROR: 'Internal server error',
     INVALID_TOKEN: 'Invalid token'
 })
-
-export interface ResponseEnvelope<T> {
-    data: T | null
-    error: string | null
-}

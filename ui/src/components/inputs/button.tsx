@@ -18,12 +18,13 @@ display: flex;
 justify-content: center;
 align-items: center;
 height: 10px;
-width: 80px;
+width: fit-content;
 padding: 10px;
 margin: 10px;
 border: 1px solid grey;
 background-color: black;
 color: white;
+cursor: pointer;
 &:hover {
     color: ${HOVER}
 }
