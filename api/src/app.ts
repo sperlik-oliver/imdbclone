@@ -4,7 +4,7 @@ import tokenMiddleware from './middleware/token.middleware';
 import { userRouter } from './routes/user/user.route';
 import { HTTP_STATUS_CODES } from './types';
 import cors from 'cors'
-import ensureAuthenticatedMiddleware from './middleware/ensure-authenticated.middleware';
+import { movieRouter } from './routes/movie/movie.route';
 
 dotenv.config()
 
@@ -21,6 +21,7 @@ app.use('/health', (_, res) => res.status(HTTP_STATUS_CODES.OK).json("Service is
 app.use('/', (req, res, next) => tokenMiddleware(req, res, next))
 
 app.use('/user', userRouter)
+app.use('/movie', movieRouter)
     
 app.use('/', (_, res) => res.status(HTTP_STATUS_CODES.NOT_FOUND).json({ data: null, errors: "Route not found" }))
 

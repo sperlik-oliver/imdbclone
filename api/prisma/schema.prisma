@@ -25,9 +25,10 @@ model User {
 model Movie {
   id            Int @id @default(autoincrement())
   name          String
-  description   String
+  description   String @db.LongText
   director      String
-  image         Bytes
+  genre         String
+  year          Int
   actors        Actor[] 
   comments      Comment[]
   ratings       Rating[]
@@ -45,7 +46,7 @@ model Actor {
 }
 
 model Rating {
-  rating        Int
+  points        Int
   movieId       Int
   movie         Movie @relation(fields: [movieId], references: [id])
   userId        Int

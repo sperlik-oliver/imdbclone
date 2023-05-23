@@ -1,6 +1,7 @@
 import React from "react";
 import Page from "./page";
+import Movies from "../components/movies/movies";
 
-const MoviePage = () => <Page><></></Page>
+const MoviesPage = () => <Page><Movies/></Page>
 
-export default MoviePage
+export default MoviesPage

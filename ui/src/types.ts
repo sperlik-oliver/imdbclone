@@ -9,4 +9,8 @@ export type Movie = {
     description: string
     director: string
     image: string
+    genre: string
+    actors: string[],
+    ratings: number[],
+    comments: { username: string, date: string, text: string }[]
 }
