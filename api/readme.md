@@ -19,3 +19,23 @@ Later when needing start and stop the container you can simply use:
 
 
 `docker compose down`
+
+To migrate the Prisma scheme to the SQL database and populate it with dummy data:
+
+`npx prisma migrate reset`
+
+**Local development** <br/>
+
+`git clone {url}`
+
+After cloning: <br />
+`yarn install`
+
+Copy .env.example to a new file called .env
+
+To launch the app: <br />
+`yarn dev`
+
+To launch the tests: <br />
+`yarn start`
+
