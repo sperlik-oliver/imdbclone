@@ -4,7 +4,7 @@ const useLogin = (email: string, password: string) => {
     return async () => {
         const { data } = await instance({
             method: 'POST',
-            url: 'user/login',
+            url: '/user/login',
             data: {
                 email,
                 password

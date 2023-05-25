@@ -32,7 +32,7 @@ const Navbar = () => {
                         value={nameFilter}
                         onChange={onChangeNameFilter}
                         placeholder={'Search for movie name'}
-                        width={700}
+                        width="40vw"
                     />
                 </Item>
             }

@@ -6,11 +6,13 @@ import { instance } from '../../axios.config';
 export type MoviesContextState = {
   movies: Movie[];
   loading: boolean;
+  setMovies: (movies: Movie[]) => void
 };
 
 const initialMovies: MoviesContextState = {
   movies: [],
   loading: true,
+  setMovies: () => {}
 };
 
 export const MoviesContext = React.createContext<MoviesContextState>(initialMovies);
@@ -24,16 +26,15 @@ const MoviesContainer = ({ children }: Props) => {
 
   const notify = useNotify();
 
-  const [movies, setMovies] = useState([])
+  const [movies, setMovies] = useState<Movie[]>([])
   const [loading, setLoading] = useState(false)
 
   const fetchMovies = instance({ 
     url: '/movie',
     method: 'GET'
    })
-   
-  useEffect(() => {
-    setLoading(true)
+
+   const getMovies = async () => {
     fetchMovies
     .then(({ data: resolved }) => {
         const { data, error } = resolved
@@ -41,18 +42,27 @@ const MoviesContainer = ({ children }: Props) => {
             notify(error, 'error')
             return
         }
-        setMovies(data)
+        setMovies(data ?? [])
     })
     .catch(() => {
       notify('An unexpected error occurred', 'error');
     })
-    .finally(() => setLoading(false))
+    
+   }
+   
+  useEffect(() => {
+    setLoading(true)
+    getMovies()
+      .finally(() => setLoading(false))
   }, []);
+
+  
 
   const context = useMemo<MoviesContextState>(
     () => ({
       movies,
       loading,
+      setMovies
     }),
     [loading, movies],
   );

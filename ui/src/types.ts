@@ -12,5 +12,11 @@ export type Movie = {
     genre: string
     actors: string[],
     ratings: number[],
-    comments: { username: string, date: string, text: string }[]
+    comments: Comment[]
+}
+
+export type Comment = {
+    username: string, 
+    date: string, 
+    text: string
 }

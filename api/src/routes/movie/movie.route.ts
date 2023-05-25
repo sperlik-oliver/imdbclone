@@ -13,21 +13,23 @@ const all = async (req: Request, res: Response) => {
 }
 
 const comment = async (req: Request, res: Response) => {
-    const comment = req.body
+    const { text, username, date, movieId } = req.body
     await safeQuery(async () => {
-        const error = validate.comment(comment)
+        const error = validate.comment(text, date)
         if (error) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error })
-        await repo.comment(comment)
+        await repo.comment(text, username, date, movieId)
         return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
     }, res, 'movie/comment')
 }
 
 const rating = async (req: Request, res: Response) => {
-    const rating = req.body
+    const { points, username, movieId } = req.body
+    console.log(points, username, movieId)
     await safeQuery(async () => {
-        const error = validate.rating(rating)
+        const error = validate.rating(points)
         if (error) return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error })
-        await repo.rating(rating)
+        const result = await repo.rating(points, username, movieId)
+        if (typeof result === 'string') return res.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ data: null, error: result })
         return res.status(HTTP_STATUS_CODES.OK).json({ data: null, error: null })
     }, res, 'movie/rating')
 }

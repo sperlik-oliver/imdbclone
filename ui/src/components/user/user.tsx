@@ -113,15 +113,15 @@ const User = () => {
                 <Button label="Delete account" onClick={async () => await onDelete()} />
             </Row>
             <Spacer/>
-            <Input width={200} value={addFriend} onChange={(friend: string) => setAddFriend(friend)} />
+            <Input width="200px" value={addFriend} onChange={(friend: string) => setAddFriend(friend)} />
             <Button label="Add Friend" onClick={async () => await onAddFriend(addFriend)} />
             <Spacer/>
-            <Input width={200} placeholder="Current Password" value={currentPassword} onChange={(currentPassword: string) => setCurrentPassword(currentPassword)} type='password' />
-            <Input width={200} placeholder="New Password" value={newPassword} onChange={(newPassword: string) => setNewPassword(newPassword)} type='password' />
-            <Input width={200} placeholder="Confirm New Password" value={confirmNewPassword} onChange={(confirmNewPassword: string) => setConfirmNewPassword(confirmNewPassword)} type='password' />
+            <Input width="200px" placeholder="Current Password" value={currentPassword} onChange={(currentPassword: string) => setCurrentPassword(currentPassword)} type='password' />
+            <Input width="200px" placeholder="New Password" value={newPassword} onChange={(newPassword: string) => setNewPassword(newPassword)} type='password' />
+            <Input width="200px" placeholder="Confirm New Password" value={confirmNewPassword} onChange={(confirmNewPassword: string) => setConfirmNewPassword(confirmNewPassword)} type='password' />
             <Button label="Change Password" onClick={async () => await onChangePassword(email, currentPassword, newPassword, confirmNewPassword)} />
             <Spacer/>
-            <Input width={200} placeholder="New Username" value={newUsername} onChange={(newUsername: string) => setNewUsername(newUsername)}/>
+            <Input width="200px" placeholder="New Username" value={newUsername} onChange={(newUsername: string) => setNewUsername(newUsername)}/>
             <Button label="Change Username" onClick={async () => await onChangeUsername(email, newUsername)} />
         </Buttons>
     </Container>

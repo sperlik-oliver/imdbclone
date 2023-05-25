@@ -8,11 +8,13 @@ type Props = {
     onChange: (value: string) => void;
     label?: string,
     placeholder?: string
-    width?: number
+    width?: string
+    height?: string
+    ['min-height']?: string
     type?: 'password' | 'email' | 'text' | 'number'
 }
 
-const Input = ({ label, value, onChange, placeholder, width = 300, type = 'text' }: Props) => {
+const Input = ({ label, value, onChange, placeholder, width = '300px', height='20px', type = 'text', 'min-height': minHeight = '20px' }: Props) => {
     return <>
       {label && <label>{label}</label>}
       <StyledInput
@@ -21,6 +23,8 @@ const Input = ({ label, value, onChange, placeholder, width = 300, type = 'text'
         onChange={(event) => onChange(getValue(event))}
         placeholder={placeholder}
         width={width}
+        height={height}
+        min-height={minHeight}
       />
     </>
 }
@@ -28,7 +32,9 @@ const Input = ({ label, value, onChange, placeholder, width = 300, type = 'text'
 export default Input
 
 type StyledProps = {
-    width: number
+    width: string
+    ['min-height']: string
+    height: string
 }
 
 const StyledInput = styled.input<StyledProps>`
@@ -41,5 +47,7 @@ border: 1px solid grey;
 border-radius: 5px;
 color: white;
 height: 30px;   
-width: ${(props) => props.width}px;
+width: ${(props) => props.width};
+height: ${(props) => props.height};
+min-height: ${(props) => props["min-height"]}
 `

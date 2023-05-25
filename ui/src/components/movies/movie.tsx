@@ -7,6 +7,8 @@ import useNotify from '../notification/use-notify'
 import placeholder from "./placeholder.jpg"
 import MovieDetail from './movie-detail'
 import { getAvg } from '../../util/math.util'
+import Rating from './rating'
+import Comments from './comments'
 
 type Props = {
     initialMovie: MovieType
@@ -35,8 +37,11 @@ const Movie = ({ initialMovie }: Props) => {
                 <MovieDetail title='Genre' detail={genre} />
                 <MovieDetail title='Actors' detail={actors.join(", ")} />
                 <MovieDetail title='Average rating (out of 5)' detail={ratings.length > 0 ? getAvg(ratings).toString() : "No ratings yet"} />
+                <Rating movieId={id} />
+                
             </DetailsColumn>
         </Details>
+        <Comments movieId={id} comments={comments} />
     </Container>
 }
 

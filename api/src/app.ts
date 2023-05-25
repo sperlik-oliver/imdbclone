@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import express, { NextFunction, Router } from 'express';
 import dotenv from 'dotenv'
 import tokenMiddleware from './middleware/token.middleware';
 import { userRouter } from './routes/user/user.route';

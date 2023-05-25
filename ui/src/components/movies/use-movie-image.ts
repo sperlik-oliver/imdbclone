@@ -19,7 +19,7 @@ const useMovieImage =  () => {
             console.log(response)
             return `http://image.tmdb.org/t/p/original/${response.data.posters[0].file_path}`
         } catch {
-            notify("The movie image went missing.", 'error')
+            // notify("The movie image went missing.", 'error')
         }
     }
 
