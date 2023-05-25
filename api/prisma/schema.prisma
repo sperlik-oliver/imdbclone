@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -8,56 +9,64 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  name String
-  password String
-  ratings Rating[]
-  comments Comment[]
+  id            Int @id @default(autoincrement())
+  email         String @unique
+  username      String @unique
+  password      String
+  token         String @unique
+  ratings       Rating[]
+  comments      Comment[]
+  toplist       Movie[]
+  friendOf      User[] @relation("friends")
+  friends       User[] @relation("friends")
 
   @@map("user")
 }
 
 model Movie {
-  id Int @id @default(autoincrement())
-  name String
-  description String
-  image String?
-  actors Actor[] 
-  comments Comment[]
-  ratings Rating[]
+  id            Int @id @default(autoincrement())
+  name          String
+  description   String @db.LongText
+  director      String
+  genre         String
+  year          Int
+  actors        Actor[] 
+  comments      Comment[]
+  ratings       Rating[]
+  toplistedBy   User[]
 
   @@map("movie")
 }
 
 model Actor {
-  id Int @id @default(autoincrement())
-  name String
-  movies Movie[]
+  id            Int @id @default(autoincrement())
+  name          String
+  movies        Movie[]
 
   @@map("actor")
 }
 
 model Rating {
-  rating Int
-  movieId Int
-  movie Movie @relation(fields: [movieId], references: [id])
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  points        Int
+  movieId       Int
+  movie         Movie @relation(fields: [movieId], references: [id])
+  userId        Int
+  user          User @relation(fields: [userId], references: [id])
 
   @@unique([movieId, userId])
   @@map("rating")
 }
 
 model Comment {
-  id Int @id @default(autoincrement())
-  text String
+  id           Int @id @default(autoincrement())
+  text         String
+  date         String
 
-  movieId Int
-  movie Movie @relation(fields: [movieId], references: [id])
+  movieId      Int
+  movie        Movie @relation(fields: [movieId], references: [id])
 
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  userId       Int
+  user         User @relation(fields: [userId], references: [id])
 
   @@map("comment")
 }
