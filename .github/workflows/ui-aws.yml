@@ -24,7 +24,7 @@
 #    See the documentation for each action used below for the recommended IAM policies for this IAM user,
 #    and best practices on handling the access key credentials.
 
-name: Deploy to Amazon ECS
+name: Deploy UI to Amazon ECS
 
 on:
   push:
@@ -33,31 +33,67 @@ on:
       - "development/cloud-setup"
     paths: 
       - "ui/**"
+      - ".github/workflows/ui-aws.yml"
+  workflow_dispatch:
 
 env:
   AWS_REGION: eu-central-1 # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: imdb-ui # set this to your Amazon ECR repository name
-  ECS_SERVICE: imdb-ui # set this to your Amazon ECS service name
-  ECS_CLUSTER: imdb-dev # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION:
-    ./ui/ecs-task-definition.json # set this to the path to your Amazon ECS task definition
-    # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME:
-    imdb-ui # set this to the name of the container in the
-    # containerDefinitions section of your task definition
+  ECS_SERVICE: imdb-ui-ecs-service # set this to your Amazon ECS service name
+  ECS_CLUSTER: dev-cluster # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: ./ui/ecs-task-definition.json # set this to the path to your Amazon ECS task definition
+                                                  # file, e.g. .aws/task-definition.json
+  CONTAINER_NAME: imdb-ui-container # set this to the name of the container in the
+                                                  # containerDefinitions section of your task definition
 
 permissions:
   contents: read
 
 jobs:
+  build:
+    name: Transpile
+    runs-on: ubuntu-latest
+
+    defaults:
+        run:
+          working-directory: ./ui
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with: 
+        node-version: '16.x'
+        cache: 'yarn'
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+    - name: Create optimized production build
+      run: yarn build
+
+    - name: Upload working directory
+      uses: bissolli/gh-action-persist-workspace@v1
+      with:
+        action: persist
+
   deploy:
+    needs: build
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
 
+    defaults:
+      run:
+        working-directory: ./ui
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Download working directory
+        uses: bissolli/gh-action-persist-workspace@v1
+        with:
+          action: retrieve
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -75,11 +111,19 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: latest
+
+          REACT_APP_SERVICE_URL: ${{ env.REACT_APP_SERVICE_URL }}
+          REACT_APP_AUTH_API_KEY: ${{ secrets.REACT_APP_AUTH_API_KEY }}
+          REACT_APP_TMDB_API_KEY: ${{ secrets.REACT_APP_TMDB_API_KEY }}
         run: |
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build \
+            --build-arg REACT_APP_SERVICE_URL=$REACT_APP_SERVICE_URL \
+            --build-arg REACT_APP_AUTH_API_KEY=$REACT_APP_AUTH_API_KEY \
+            --build-arg REACT_APP_TMDB_API_KEY=$REACT_APP_TMDB_API_KEY \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 

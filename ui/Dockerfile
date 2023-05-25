@@ -1,39 +1,24 @@
-# WORKDIR /app
-
-# # Root
-# COPY node_modules ./node_modules
-# COPY package.json ./package.json
-# COPY yarn.lock ./yarn.lock
-# COPY database/migrate.ts ./database/migrate.ts
-# COPY prisma/migrations ./prisma/migrations
-# COPY prisma/schema.prisma ./prisma/schema.prisma
-# COPY dist ./dist
-
-# EXPOSE 3000
-
-# #TO change
-# #ENTRYPOINT yarn run start:api
-
-# ENTRYPOINT yarn run dev
-
-
-#######
-
-FROM node:16
-
-# Setting working directory. All the path will be relative to WORKDIR
+# Stage 2: Serve the React app using serve
+FROM --platform=linux/amd64 node:16 as runtime
 WORKDIR /usr/src/app
 
-# Installing dependencies
-COPY package*.json ./
-RUN yarn install
+# Root
+COPY ./package.json ./package.json
+COPY ./build ./build
+COPY ./yarn.lock ./yarn.lock
+COPY ./node_modules ./node_modules
 
-# Copying source files
-COPY . .
+RUN yarn global add serve
 
-# Building app
-RUN yarn run build
+ARG REACT_APP_SERVICE_URL
+ARG REACT_APP_AUTH_API_KEY
+ARG REACT_APP_TMDB_API_KEY
 
-# Running the app
-# CMD [ "yarn", "start" ]
-ENTRYPOINT yarn run start
+ENV REACT_APP_SERVICE_URL=$REACT_APP_SERVICE_URL
+ENV REACT_APP_AUTH_API_KEY=$REACT_APP_AUTH_API_KEY
+ENV REACT_APP_TMDB_API_KEY=$REACT_APP_TMDB_API_KEY
+
+ENV PORT=3000
+
+EXPOSE 3000
+CMD ["serve", "-s", "build", "-l", "3000"]

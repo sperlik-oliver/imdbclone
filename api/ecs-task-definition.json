@@ -1,25 +1,23 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:eu-central-1:595123720229:task-definition/imdb-ui-task-def:2",
+    "taskDefinitionArn": "arn:aws:ecs:eu-central-1:595123720229:task-definition/imdb-api-task-def:7",
     "containerDefinitions": [
         {
-            "name": "imdb-ui-container",
-            "image": "595123720229.dkr.ecr.eu-central-1.amazonaws.com/imdb-ui:latest",
+            "name": "imdb-api-container",
+            "image": "595123720229.dkr.ecr.eu-central-1.amazonaws.com/imdb-api:latest",
             "cpu": 0,
             "portMappings": [
                 {
-                    "name": "imdb-ui-container-3000-tcp",
-                    "containerPort": 3000,
-                    "hostPort": 3000,
+                    "name": "imdb-api-container-5001-tcp",
+                    "containerPort": 5001,
+                    "hostPort": 5001,
                     "protocol": "tcp",
                     "appProtocol": "http"
                 }
             ],
             "essential": true,
             "environment": [],
-            "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
-            "ulimits": [],
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
@@ -31,11 +29,11 @@
             }
         }
     ],
-    "family": "imdb-ui-task-def",
+    "family": "imdb-api-task-def",
     "taskRoleArn": "arn:aws:iam::595123720229:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::595123720229:role/ecsTaskExecutionRole",
     "networkMode": "host",
-    "revision": 2,
+    "revision": 7,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -74,13 +72,13 @@
     "requiresCompatibilities": [
         "EC2"
     ],
-    "cpu": "512",
+    "cpu": "256",
     "memory": "512",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2023-05-24T17:04:42.588Z",
+    "registeredAt": "2023-05-22T12:47:46.390Z",
     "registeredBy": "arn:aws:iam::595123720229:root",
     "tags": []
 }
