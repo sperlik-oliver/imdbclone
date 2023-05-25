@@ -1,3 +1,18 @@
+**Local development** <br/>
+
+`git clone {url}`
+
+After cloning: <br />
+`yarn install`
+
+Copy .env.example to a new file called .env
+
+To launch the app: <br />
+`yarn dev`
+
+To launch the tests: <br />
+`yarn start`
+
 **Local database setup** <br/>
 The service relies on a MySQL database.
 The database instance on AWS RDS is hosted on a type of Unix-system which
@@ -24,18 +39,5 @@ To migrate the Prisma scheme to the SQL database and populate it with dummy data
 
 `npx prisma migrate reset`
 
-**Local development** <br/>
 
-`git clone {url}`
-
-After cloning: <br />
-`yarn install`
-
-Copy .env.example to a new file called .env
-
-To launch the app: <br />
-`yarn dev`
-
-To launch the tests: <br />
-`yarn start`
 
